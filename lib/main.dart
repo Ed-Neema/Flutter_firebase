@@ -3,7 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:freelancer_firebase/firebase_options.dart';
+import 'package:freelancer_firebase/screens/home_page.dart';
+import 'package:freelancer_firebase/screens/login_screen.dart';
 import 'package:freelancer_firebase/screens/register_screen.dart';
+import 'package:freelancer_firebase/services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +33,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: RegisterScreen(),
+      home: StreamBuilder(
+          builder: ((context, snapshot) {
+            if (snapshot.hasData) {
+              return RegisterScreen();
+            }
+            return LoginScreen();
+          }),
+          stream: AuthService().firebaseAuth.authStateChanges()),
     );
   }
 }

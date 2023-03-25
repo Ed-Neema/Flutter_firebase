@@ -5,18 +5,26 @@ import 'package:freelancer_firebase/screens/register_screen.dart';
 import '../services/auth_service.dart';
 import 'home_page.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});
 
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
+
   TextEditingController passwordController = TextEditingController();
+
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Login"),
+          title: const Text("Login"),
           centerTitle: true,
           backgroundColor: Colors.redAccent,
         ),
@@ -46,48 +54,51 @@ class LoginScreen extends StatelessWidget {
               SizedBox(
                 height: 30,
               ),
-              Container(
-                height: 50,
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        backgroundColor: Colors.redAccent),
-                    onPressed: () async {
-                      if (emailController.text == "" ||
-                          passwordController.text == "") {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("All fields are required"),
-                          backgroundColor: Colors.redAccent,
-                        ));
-                      } else {
-                        try {
-                          User? result = await AuthService().login(
-                              emailController.text.trim(),
-                              passwordController.text.trim());
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomePage()));
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(" Log in Successful"),
-                            backgroundColor: Colors.greenAccent,
-                          ));
-                        } catch (error) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text("${error.toString()}"),
-                            backgroundColor: Colors.redAccent,
-                          ));
-                        }
-                      }
-                    },
-                    child: Text(
-                      "Login",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                    )),
-              ),
+              loading
+                  ? CircularProgressIndicator()
+                  : Container(
+                      height: 50,
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              backgroundColor: Colors.redAccent),
+                          onPressed: () async {
+                            setState(() {
+                              loading = true;
+                            });
+                            if (emailController.text == "" ||
+                                passwordController.text == "") {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text("All fields are required"),
+                                backgroundColor: Colors.redAccent,
+                              ));
+                            } else {
+                              try {
+                                User? result = await AuthService().login(
+                                    emailController.text.trim(),
+                                    passwordController.text.trim(),
+                                    context);
+                              } catch (error) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text("${error.toString()}"),
+                                  backgroundColor: Colors.redAccent,
+                                ));
+                              }
+                            }
+                            setState(() {
+                              loading = false;
+                            });
+                          },
+                          child: Text(
+                            "Login",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w500),
+                          )),
+                    ),
               SizedBox(
                 height: 20,
               ),

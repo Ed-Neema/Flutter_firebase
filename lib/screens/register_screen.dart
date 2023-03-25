@@ -1,16 +1,27 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:freelancer_firebase/screens/home_page.dart';
 import 'package:freelancer_firebase/screens/login_screen.dart';
-
 import '../services/auth_service.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
   RegisterScreen({super.key});
 
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController emailController = TextEditingController();
+
   TextEditingController passwordController = TextEditingController();
+
   TextEditingController confirmController = TextEditingController();
+  // showing loading indicator
+  bool loading = false;
+  bool googleLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -58,54 +69,53 @@ class RegisterScreen extends StatelessWidget {
               SizedBox(
                 height: 30,
               ),
-              Container(
-                height: 50,
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        backgroundColor: Colors.redAccent),
-                    onPressed: () async {
-                      if (emailController.text == "" ||
-                          passwordController.text == "") {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("All fields are required"),
-                          backgroundColor: Colors.redAccent,
-                        ));
-                      } else if (passwordController.text !=
-                          confirmController.text) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Passwords don't match"),
-                          backgroundColor: Colors.redAccent,
-                        ));
-                      } else {
-                        try {
-                          User? result = await AuthService().register(
-                              emailController.text.trim(),
-                              passwordController.text.trim());
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomePage()));
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(" Account Created Successfully"),
-                            backgroundColor: Colors.greenAccent,
-                          ));
-                        } catch (error) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text("${error.toString()}"),
-                            backgroundColor: Colors.redAccent,
-                          ));
-                        }
-                      }
-                    },
-                    child: Text(
-                      "Submit",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                    )),
-              ),
+              loading
+                  ? CircularProgressIndicator()
+                  : Container(
+                      height: 50,
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              backgroundColor: Colors.redAccent),
+                          onPressed: () async {
+                            // setting laoding is true after pressing
+                            setState(() {
+                              loading = true;
+                            });
+                            if (emailController.text == "" ||
+                                passwordController.text == "") {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text("All fields are required"),
+                                backgroundColor: Colors.redAccent,
+                              ));
+                            } else if (passwordController.text !=
+                                confirmController.text) {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text("Passwords don't match"),
+                                backgroundColor: Colors.redAccent,
+                              ));
+                            } else {
+                              User? result = await AuthService().register(
+                                  emailController.text.trim(),
+                                  passwordController.text.trim(),
+                                  context);
+                            }
+
+                            // after all is done, set to false
+                            setState(() {
+                              loading = false;
+                            });
+                          },
+                          child: Text(
+                            "Submit",
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w500),
+                          )),
+                    ),
               SizedBox(
                 height: 20,
               ),
@@ -118,7 +128,29 @@ class RegisterScreen extends StatelessWidget {
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
-                          color: Colors.redAccent)))
+                          color: Colors.redAccent))),
+              SizedBox(
+                height: 20,
+              ),
+              Divider(),
+              SizedBox(
+                height: 20,
+              ),
+              googleLoading
+                  ? CircularProgressIndicator()
+                  : SignInButton(
+                      Buttons.Google,
+                      onPressed: () async {
+                        setState(() {
+                          googleLoading = true;
+                        });
+                        await AuthService().signInWithGoogle();
+                        setState(() {
+                          googleLoading = false;
+                        });
+                      },
+                      text: "Continue with Google",
+                    )
             ],
           ),
         ),
