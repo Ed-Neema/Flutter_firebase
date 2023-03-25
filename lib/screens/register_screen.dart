@@ -144,7 +144,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         setState(() {
                           googleLoading = true;
                         });
-                        await AuthService().signInWithGoogle();
+                        await AuthService().signInWithGoogle(context);
                         setState(() {
                           googleLoading = false;
                         });

@@ -64,6 +64,8 @@ class AuthService {
   // Signout
   Future<User?> signout(BuildContext context) async {
     try {
+      // for google
+      await GoogleSignIn().signOut();
       await firebaseAuth.signOut();
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(" Logged out Successfully"),
@@ -85,7 +87,7 @@ class AuthService {
   }
 
   // Google signin
-  Future<User?> signInWithGoogle() async {
+  Future<User?> signInWithGoogle(BuildContext context) async {
     try {
       // trigger authentication dialog
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -101,7 +103,12 @@ class AuthService {
         // and sign them in
         UserCredential userCredential =
             await firebaseAuth.signInWithCredential(credential);
-
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(" Logged in Successfully"),
+          backgroundColor: Colors.greenAccent,
+        ));
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => HomePage()));
         return userCredential.user;
       }
     } catch (error) {

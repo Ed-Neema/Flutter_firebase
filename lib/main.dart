@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
       home: StreamBuilder(
           builder: ((context, snapshot) {
             if (snapshot.hasData) {
-              return RegisterScreen();
+              return HomePage();
             }
             return LoginScreen();
           }),
