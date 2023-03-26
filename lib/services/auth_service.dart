@@ -107,6 +107,7 @@ class AuthService {
           content: Text(" Logged in Successfully"),
           backgroundColor: Colors.greenAccent,
         ));
+        // ignore: use_build_context_synchronously
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => HomePage()));
         return userCredential.user;
