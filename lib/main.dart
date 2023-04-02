@@ -29,14 +29,16 @@ class MyApp extends StatelessWidget {
       useInheritedMediaQuery: true,
       locale: DevicePreview.locale(context),
       builder: DevicePreview.appBuilder,
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Firebase',
       theme: ThemeData(
+        brightness: Brightness.dark,
         primarySwatch: Colors.blue,
       ),
       home: StreamBuilder(
-          builder: ((context, snapshot) {
+          builder: ((context,AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
-              return HomePage();
+              return HomePage(user: snapshot.data);
             }
             return LoginScreen();
           }),

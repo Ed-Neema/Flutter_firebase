@@ -19,8 +19,9 @@ class AuthService {
         backgroundColor: Colors.greenAccent,
       ));
       // ignore: use_build_context_synchronously
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => HomePage()));
+      // User? user = userCredential.user;
+      // Navigator.pushReplacement(
+      //     context, MaterialPageRoute(builder: (context) => HomePage(user:user)));
       return userCredential.user;
     } on FirebaseAuthException catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -41,8 +42,8 @@ class AuthService {
     try {
       UserCredential userCredential = await firebaseAuth
           .signInWithEmailAndPassword(email: email, password: password);
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => HomePage()));
+      // Navigator.pushReplacement(
+      //     context, MaterialPageRoute(builder: (context) => HomePage()));
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(" Log in Successful"),
         backgroundColor: Colors.greenAccent,
@@ -108,8 +109,8 @@ class AuthService {
           backgroundColor: Colors.greenAccent,
         ));
         // ignore: use_build_context_synchronously
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
+        // Navigator.pushReplacement(
+        //     context, MaterialPageRoute(builder: (context) => HomePage()));
         return userCredential.user;
       }
     } catch (error) {

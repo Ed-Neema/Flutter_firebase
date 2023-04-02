@@ -81,6 +81,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                     emailController.text.trim(),
                                     passwordController.text.trim(),
                                     context);
+                                if (result != null) {
+                                  print("Success");
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              HomePage(user: result)),
+                                      (route) => false);
+                                }
                               } catch (error) {
                                 ScaffoldMessenger.of(context)
                                     .showSnackBar(SnackBar(

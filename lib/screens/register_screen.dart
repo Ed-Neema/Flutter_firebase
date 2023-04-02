@@ -103,6 +103,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   emailController.text.trim(),
                                   passwordController.text.trim(),
                                   context);
+                              if (result != null) {
+                                print("Success");
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            HomePage(user: result)),
+                                    (route) => false);
+                              }
                             }
 
                             // after all is done, set to false
@@ -144,10 +153,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         setState(() {
                           googleLoading = true;
                         });
-                        await AuthService().signInWithGoogle(context);
+                        User? result = await AuthService().signInWithGoogle(context);
                         setState(() {
                           googleLoading = false;
                         });
+                        if (result != null) {
+                          print("Success");
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomePage(user: result)),
+                              (route) => false);
+                        }
                       },
                       text: "Continue with Google",
                     )
